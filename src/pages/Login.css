@@ -1,0 +1,225 @@
+/* Login.css */
+:root {
+    --primary: #2A2A72;
+    --secondary: #009FFD;
+    --accent: #FF0076;
+    --text: #2B2B2B;
+    --background: #F8F9FA;
+    --error-red: #dc3545;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--background);
+}
+
+.login-container {
+    width: 100%;
+    padding: 2rem;
+}
+
+.login-card {
+    background: white;
+    padding: 4rem;
+    max-width: 500px;
+    margin: 0 auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.card-header h1 {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.card-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 10px rgba(42, 42, 114, 0.1);
+}
+
+.input-group label {
+    position: absolute;
+    left: 3rem;
+    top: 1rem;
+    color: #999;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus~label,
+.input-group input:valid~label {
+    top: -0.8rem;
+    left: 1rem;
+    font-size: 0.8rem;
+    background: white;
+    padding: 0 0.5rem;
+    color: var(--primary);
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 1.2rem;
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(42, 42, 114, 0.3);
+}
+
+.google-btn {
+    width: 100%;
+    padding: 1rem;
+    background: white;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.google-btn:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.google-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.divider {
+    margin: 2rem 0;
+    display: flex;
+    align-items: center;
+    color: #999;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 2px solid #eee;
+}
+
+.divider span {
+    padding: 0 1rem;
+}
+
+.error-message {
+    color: var(--error-red);
+    background: #ffeef0;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.card-footer {
+    text-align: center;
+    margin-top: 2rem;
+    color: #666;
+}
+
+.card-footer a {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.card-footer a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .login-card {
+        padding: 2rem;
+        width: 90%;
+    }
+
+    .card-header h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 1.5rem;
+        border-radius: 15px;
+    }
+
+    .input-group input {
+        padding: 0.8rem 0.8rem 0.8rem 2.5rem;
+    }
+
+    .input-icon {
+        left: 0.8rem;
+        font-size: 1rem;
+    }
+
+    .primary-btn,
+    .google-btn {
+        font-size: 0.95rem;
+        padding: 0.8rem;
+    }
+}

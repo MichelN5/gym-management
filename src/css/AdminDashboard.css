@@ -1,0 +1,182 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+/* Container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Top Navigation Bar */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.top-nav h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.top-nav button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.top-nav button:hover {
+    background-color: #2980b9;
+}
+
+/* Cards */
+.card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+/* Forms and Inputs */
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* Tables */
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th,
+table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #f4f7f6;
+    color: #2c3e50;
+}
+
+table tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Buttons in Tables */
+table button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    font-size: 14px;
+}
+
+/* Export Button */
+.export-button {
+    background-color: #27ae60;
+}
+
+.export-button:hover {
+    background-color: #219653;
+}
+
+/* Notification and Bill Sections */
+.notification-section,
+.bill-section {
+    margin-top: 20px;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    resize: vertical;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .top-nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .top-nav h1 {
+        margin-bottom: 10px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    input,
+    textarea,
+    select {
+        font-size: 14px;
+    }
+
+    button {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    table th,
+    table td {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    table button {
+        width: 100%;
+        margin: 5px 0;
+    }
+}

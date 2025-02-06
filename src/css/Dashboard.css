@@ -1,0 +1,309 @@
+/* Dashboard.css */
+:root {
+    --primary-color: #1a1d21;
+    /* Dark background */
+    --secondary-color: #25292e;
+    /* Slightly lighter dark for cards/sidebar */
+    --accent-color: #00c896;
+    /* Teal accent color */
+    --text-primary: #ffffff;
+    /* White text */
+    --text-secondary: #b0b3b8;
+    /* Light gray text */
+    --success-color: #4caf50;
+    /* Green for success states */
+    --warning-color: #ff9800;
+    /* Orange for warnings */
+    --info-color: #2196f3;
+    /* Blue for info */
+}
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--primary-color);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    /* Prevent horizontal scroll */
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+    /* Full viewport width */
+    background-color: var(--primary-color);
+}
+
+/* Mobile Header */
+.mobile-header {
+    display: none;
+    /* Hidden by default on desktop */
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--secondary-color);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.user-icon {
+    font-size: 1.2rem;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: var(--secondary-color);
+    padding: 2rem 1rem;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    /* Prevent sidebar from shrinking */
+}
+
+.sidebar-header {
+    padding: 1rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar-nav a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav a.active,
+.sidebar-nav a:hover {
+    background: var(--primary-color);
+    color: var(--text-primary);
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    margin-top: 60px;
+    /* Space for mobile header */
+    min-width: 0;
+    /* Allow content to shrink */
+    width: 100%;
+    /* Full width */
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    /* Full width */
+}
+
+.stat-card {
+    background: var(--secondary-color);
+    padding: 1.5rem;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.stat-card.primary::before {
+    background: var(--accent-color);
+}
+
+.stat-card.success::before {
+    background: var(--success-color);
+}
+
+.stat-card.warning::before {
+    background: var(--warning-color);
+}
+
+.stat-card.info::before {
+    background: var(--info-color);
+}
+
+.stat-card h3 {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.stat-card p {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.stat-trend {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Recent Activity */
+.recent-activity {
+    background: var(--secondary-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 100%;
+    /* Full width */
+}
+
+.activity-table {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+}
+
+.table-header,
+.table-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    padding: 1rem;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.table-header {
+    font-weight: bold;
+    color: var(--text-secondary);
+}
+
+.status {
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.status.success {
+    background: #4caf5050;
+    color: var(--success-color);
+}
+
+.status.warning {
+    background: #ff980050;
+    color: var(--warning-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .mobile-header {
+        display: flex;
+        /* Show mobile header on small screens */
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        z-index: 999;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-top: 80px;
+        /* Adjust for mobile header */
+        padding: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+        /* Stack cards on mobile */
+    }
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr 1.5fr 1fr;
+        /* Adjust table columns for mobile */
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .sidebar {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+}
+
+/* Full-Screen Adjustments */
+@media (min-width: 1200px) {
+    .main-content {
+        padding: 2rem 3rem;
+        /* Add more padding on wide screens */
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        /* 4 cards in a row on wide screens */
+    }
+}
