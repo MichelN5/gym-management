@@ -10,7 +10,7 @@ const PrivateRoute = ({ children, roleRequired }) => {
 
     }
 
-    if (roleRequired || userRole !== roleRequired) {
+    if (roleRequired && userRole !== roleRequired) {
         return <Navigate to="/" />; // Redirect to home or another page
     }
 
