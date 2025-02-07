@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { FaLock } from "react-icons/fa"
 import "./Login.css";
 
 const Login = () => {
@@ -73,7 +74,7 @@ const Login = () => {
                             required
                         />
                         <label htmlFor="password">Password</label>
-                        <span className="input-icon">🔒</span>
+                        <FaLock className="input-icon"/>
                     </div>
 
                     <button type="submit" className="primary-btn">

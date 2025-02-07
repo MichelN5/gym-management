@@ -29,16 +29,16 @@ const Dashboard = () => {
                     <a href="#dashboard" className="active">
                         <FiActivity /> Dashboard
                     </a>
-                    <a href="#members">
+                    <a href="/members">
                         <FiUsers /> Members
                     </a>
-                    <a href="#payments">
+                    <a href="/payments">
                         <FiDollarSign /> Payments
                     </a>
-                    <a href="#workouts">
+                    <a href="/workouts">
                         <FiActivity /> Workouts
                     </a>
-                    <a href="#settings">
+                    <a href="/settings">
                         <FiUser /> Settings
                     </a>
                 </nav>

@@ -5,7 +5,10 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminDashboard from "./pages/AdminDashboard";
-
+import MembersPage from "./pages/MembersPage";
+import PaymentsPage from "./pages/PaymentsPage";
+import WorkoutPage from "./pages/WorkoutPage";
+import SettingsPage from "./pages/SettingsPage";
 const App = () => (
   <AuthProvider>
     <Router>
@@ -17,6 +20,10 @@ const App = () => (
             <AdminDashboard />
           </PrivateRoute>
         } />
+        <Route path="/members" element={<MembersPage />} />
+        <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/workouts" element={<WorkoutPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route path="/dashboard" element={<PrivateRoute roleRequired="member"><Dashboard /></PrivateRoute>} />
       </Routes>
     </Router>
