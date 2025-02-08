@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FaLock } from "react-icons/fa"
+import { FaLock, FaEnvelope } from "react-icons/fa"
 import "../css/Login.css";
 
 const Login = () => {
@@ -62,7 +62,7 @@ const Login = () => {
                             required
                         />
                         <label htmlFor="email">Email Address</label>
-                        <span className="input-icon">✉</span>
+                        <FaEnvelope className="input-icon" />
                     </div>
 
                     <div className="input-group">
