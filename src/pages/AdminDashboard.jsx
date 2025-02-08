@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs , addDoc, deleteDoc, updateDoc, doc} from "firebase/firestore";
 import { db } from "../firebase.js";
 import Sidebar from "../components/Sidebar";
 import FeePackages from "../components/FeePackages";

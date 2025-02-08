@@ -20,10 +20,7 @@ const App = () => (
             <AdminDashboard />
           </PrivateRoute>
         } />
-        <Route path="/members" element={<MembersPage />} />
-        <Route path="/payments" element={<PaymentsPage />} />
-        <Route path="/workouts" element={<WorkoutPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
+        <Route path='/' element={<Login />} />
         <Route path="/dashboard" element={<PrivateRoute roleRequired="member"><Dashboard /></PrivateRoute>} />
       </Routes>
     </Router>
