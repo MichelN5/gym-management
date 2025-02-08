@@ -85,6 +85,49 @@ button:hover {
     background-color: #2980b9;
 }
 
+/* Fee Package Management */
+.package-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.package-form input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.package-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.package-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.package-item span {
+    font-size: 16px;
+}
+
+.package-item button {
+    background-color: #e74c3c;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.package-item button:hover {
+    background-color: #c0392b;
+}
+
 /* Tables */
 .table-responsive {
     overflow-x: auto;
@@ -112,11 +155,36 @@ table tr:hover {
     background-color: #f9f9f9;
 }
 
-/* Buttons in Tables */
+/* Inline Edit Form */
+table input,
+table select {
+    width: 100%;
+    padding: 8px;
+    margin: 0;
+    font-size: 14px;
+}
+
 table button {
     padding: 5px 10px;
     margin: 0 5px;
     font-size: 14px;
+}
+
+/* Buttons in Tables */
+table button.edit-button {
+    background-color: #f1c40f;
+}
+
+table button.edit-button:hover {
+    background-color: #f39c12;
+}
+
+table button.delete-button {
+    background-color: #e74c3c;
+}
+
+table button.delete-button:hover {
+    background-color: #c0392b;
 }
 
 /* Export Button */
@@ -179,4 +247,118 @@ textarea {
         width: 100%;
         margin: 5px 0;
     }
+
+    .package-form {
+        flex-direction: column;
+    }
+
+    .package-form input {
+        width: 100%;
+    }
+
+    .package-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .package-item button {
+        width: 100%;
+    }
+}
+
+/* Add these styles to your CSS */
+.payments-section table {
+    margin-top: 20px;
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-badge.pending {
+    background-color: #ffe082;
+    color: #ffa000;
+}
+
+.status-badge.paid {
+    background-color: #c8e6c9;
+    color: #388e3c;
+}
+
+.status-toggle {
+    padding: 5px 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.status-toggle.pending {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.status-toggle.paid {
+    background-color: #ff9800;
+    color: white;
+}
+
+.status-toggle:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+
+.container {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    height: 100vh;
+}
+
+.sidebar h2 {
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+    cursor: pointer;
+}
+
+.sidebar ul li:hover {
+    text-decoration: underline;
+}
+
+.export-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.export-button:hover {
+    background-color: #219653;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
 }

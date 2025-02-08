@@ -74,7 +74,7 @@ const Login = () => {
                             required
                         />
                         <label htmlFor="password">Password</label>
-                        <FaLock className="input-icon"/>
+                        <FaLock className="input-icon" />
                     </div>
 
                     <button type="submit" className="primary-btn">
