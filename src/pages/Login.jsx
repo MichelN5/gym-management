@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FaLock } from "react-icons/fa"
-import "./Login.css";
+import "../css/Login.css";
 
 const Login = () => {
     const [email, setEmail] = useState("");
