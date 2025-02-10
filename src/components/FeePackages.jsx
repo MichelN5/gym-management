@@ -31,14 +31,28 @@ const FeePackages = ({ feePackages, addFeePackage, deleteFeePackage }) => {
                 />
                 <button onClick={() => addFeePackage(newFeePackage)}>Add Package</button>
             </div>
-            <div className="package-list">
-                {feePackages.map((pkg) => (
-                    <div key={pkg.id} className="package-item">
-                        <span>{pkg.name} (${pkg.price} - {pkg.duration})</span>
-                        <button onClick={() => deleteFeePackage(pkg.id)}>Delete</button>
-                    </div>
-                ))}
-            </div>
+            <table className="member-table">
+                <thead>
+                    <tr>
+                        <th>Package Name</th>
+                        <th>Price ($)</th>
+                        <th>Duration</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {feePackages.map((pkg) => (
+                        <tr key={pkg.id}>
+                            <td>{pkg.name}</td>
+                            <td>{pkg.price}</td>
+                            <td>{pkg.duration}</td>
+                            <td>
+                                <button onClick={() => deleteFeePackage(pkg.id)}>Delete</button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };

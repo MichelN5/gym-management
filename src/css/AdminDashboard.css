@@ -1,364 +1,486 @@
-/* General Styles */
-body {
-    font-family: 'Arial', sans-serif;
+/* ===== Core Layout Reset ===== */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f7f6;
-    color: #333;
+    box-sizing: border-box;
 }
 
-/* Container */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    line-height: 1.6;
+    min-width: 300px;
+    /* Prevent horizontal scroll */
+}
+
+/* ===== Layout Structure ===== */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Top Navigation Bar */
-.top-nav {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #fff;
-    padding: 10px 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    height: 100vh;
 }
 
-.top-nav h1 {
-    font-size: 24px;
-    margin: 0;
+/* ===== Sidebar ===== */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+    color: white;
+    padding: 1.5rem;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease-in-out;
 }
 
-.top-nav button {
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+.sidebar h2 {
+
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #3498db;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    margin: 0.8rem 0;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
 }
 
-.top-nav button:hover {
-    background-color: #2980b9;
+.sidebar ul li:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(8px);
 }
 
-/* Cards */
+/* ===== Content Area ===== */
+.content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 1.5rem;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+/* ===== Cards ===== */
 .card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    margin-top: 2rem;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .card h2 {
-    font-size: 20px;
-    margin-bottom: 15px;
-    color: #2c3e50;
+    padding-top: 10px;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
 }
 
-/* Forms and Inputs */
-input,
-textarea,
-select {
+/* ===== Forms & Inputs ===== */
+.card input,
+.card textarea,
+.card select {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    border: 2px solid #e0e6ed;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
-button {
-    background-color: #3498db;
-    color: #fff;
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+/* ===== Buttons ===== */
+.card button {
+    background: #3498db;
+    color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #2980b9;
-}
-
-/* Fee Package Management */
-.package-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.package-form input {
-    flex: 1;
-    min-width: 200px;
-}
-
-.package-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.package-item {
-    display: flex;
-    justify-content: space-between;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
     align-items: center;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    gap: 0.5rem;
 }
 
-.package-item span {
-    font-size: 16px;
+.card button:hover {
+    background: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(41, 128, 185, 0.3);
 }
 
-.package-item button {
-    background-color: #e74c3c;
-    padding: 5px 10px;
-    font-size: 14px;
-}
-
-.package-item button:hover {
-    background-color: #c0392b;
-}
-
-/* Tables */
-.table-responsive {
-    overflow-x: auto;
-}
-
+/* ===== Tables ===== */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin: 2rem 0;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 table th,
 table td {
-    padding: 12px;
+    padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #e0e6ed;
 }
 
 table th {
-    background-color: #f4f7f6;
-    color: #2c3e50;
+    background-color: #f8f9fa;
+    font-weight: 600;
 }
 
 table tr:hover {
-    background-color: #f9f9f9;
+    background-color: #f1f1f1;
 }
 
-/* Inline Edit Form */
-table input,
-table select {
-    width: 100%;
-    padding: 8px;
-    margin: 0;
-    font-size: 14px;
+/* ===== Status Badges ===== */
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
 }
 
-table button {
-    padding: 5px 10px;
-    margin: 0 5px;
-    font-size: 14px;
+.status-badge.pending {
+    background: #fff3cd;
+    color: #856404;
 }
 
-/* Buttons in Tables */
-table button.edit-button {
-    background-color: #f1c40f;
+.status-badge.paid {
+    background: #d4edda;
+    color: #155724;
 }
 
-table button.edit-button:hover {
-    background-color: #f39c12;
-}
-
-table button.delete-button {
-    background-color: #e74c3c;
-}
-
-table button.delete-button:hover {
-    background-color: #c0392b;
-}
-
-/* Export Button */
+/* ===== Export Button ===== */
 .export-button {
-    background-color: #27ae60;
+    background: #27ae60;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 2rem;
+    transition: all 0.3s ease;
 }
 
 .export-button:hover {
-    background-color: #219653;
+    background: #219653;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(33, 150, 83, 0.3);
 }
 
-/* Notification and Bill Sections */
-.notification-section,
-.bill-section {
-    margin-top: 20px;
+/* ===== Responsive Design ===== */
+@media (max-width: 1024px) {
+    .sidebar {
+
+        transform: translateX(-100%);
+        width: 280px;
+    }
+
+    .sidebar h2 {
+        padding-top: 50px;
+
+    }
+
+    .content {
+        margin-left: 0;
+        width: 100%;
+        padding-top: 5rem;
+    }
+
+    /* Mobile Sidebar Toggle */
+    .mobile-menu-toggle {
+        display: block;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 2000;
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 0.8rem 1.2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.2rem;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
 }
 
-textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
-    resize: vertical;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-    .top-nav {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .top-nav h1 {
-        margin-bottom: 10px;
-    }
-
     .card {
-        padding: 15px;
+        padding: 1rem;
+    }
+
+    table th,
+    table td {
+        padding: 0.8rem;
+        font-size: 0.9rem;
     }
 
     input,
     textarea,
     select {
-        font-size: 14px;
+        font-size: 0.9rem;
     }
 
-    button {
+    table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Members Page Specific Adjustments */
+    .member-table th,
+    .member-table td {
+        white-space: nowrap;
+    }
+
+    .member-table td {
+        font-size: 0.85rem;
+    }
+
+    .member-table button {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .member-table {
+        display: block;
         width: 100%;
-        margin: 5px 0;
     }
 
-    table th,
-    table td {
-        padding: 8px;
-        font-size: 14px;
+    .member-table thead {
+        display: none;
     }
 
-    table button {
-        width: 100%;
-        margin: 5px 0;
-    }
-
-    .package-form {
+    .member-table tr {
+        display: flex;
         flex-direction: column;
+        margin-bottom: 1rem;
+        border: 1px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 0.5rem;
     }
 
-    .package-form input {
+    .member-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        border-bottom: 1px solid #e0e6ed;
+    }
+
+    .member-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #3498db;
+        margin-right: 1rem;
+    }
+
+    .member-table td:last-child {
+        border-bottom: none;
+        justify-content: center;
+    }
+
+    .member-table td button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .content {
+        padding: 1rem;
+        padding-top: 4rem;
+    }
+
+    .card {
+        padding: 0.8rem !important;
+    }
+
+    .card h2 {
+        font-size: 1.2rem;
+    }
+
+    .card input,
+    .card textarea,
+    select {
+        padding: 0.6rem 0.8rem !important;
+        font-size: 0.85rem !important;
+    }
+
+    .member-table td {
+        padding: 0.4rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .member-table td::before {
+        font-size: 0.75rem !important;
+    }
+
+    .member-table td button {
+        font-size: 0.75rem !important;
+        padding: 0.4rem !important;
+    }
+}
+
+@media (max-width: 300px) {
+    .content {
+        padding: 0.5rem !important;
+    }
+
+    .card {
+        padding: 0.5rem !important;
+    }
+
+    .card h2 {
+        font-size: 1.1rem !important;
+    }
+
+    input,
+    textarea,
+    select {
+        padding: 0.5rem 0.6rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .member-table td {
+        padding: 0.3rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    .member-table td::before {
+        font-size: 0.7rem !important;
+    }
+
+    .member-table td button {
+        font-size: 0.7rem !important;
+        padding: 0.3rem !important;
+    }
+}
+
+
+/* Add to existing CSS */
+.payment-form {
+    display: grid;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Payment Table Mobile Styles */
+@media (max-width: 600px) {
+    .payment-table {
         width: 100%;
     }
 
-    .package-item {
+    .payment-table thead {
+        display: none;
+    }
+
+    .payment-table tr {
+        display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+        margin-bottom: 1rem;
+        border: 1px solid #e0e6ed;
+        border-radius: 8px;
+        padding: 0.5rem;
     }
 
-    .package-item button {
+    .payment-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        border-bottom: 1px solid #e0e6ed;
+    }
+
+    .payment-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #3498db;
+        margin-right: 1rem;
+    }
+
+    .payment-table td:last-child {
+        border-bottom: none;
+        justify-content: center;
+    }
+
+    .payment-table .status-badge {
+        margin-left: auto;
+    }
+
+    .payment-table td button {
         width: 100%;
+        padding: 0.5rem !important;
+        font-size: 0.8rem !important;
     }
 }
 
-/* Add these styles to your CSS */
-.payments-section table {
-    margin-top: 20px;
+@media (max-width: 480px) {
+    .payment-table td {
+        padding: 0.4rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .payment-table td::before {
+        font-size: 0.75rem !important;
+    }
+
+    .payment-table .status-badge {
+        font-size: 0.7rem !important;
+    }
 }
 
-.status-badge {
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 14px;
-    font-weight: bold;
-    text-transform: uppercase;
-}
+@media (max-width: 300px) {
+    .payment-table td {
+        padding: 0.3rem !important;
+        font-size: 0.75rem !important;
+    }
 
-.status-badge.pending {
-    background-color: #ffe082;
-    color: #ffa000;
-}
+    .payment-table td::before {
+        font-size: 0.7rem !important;
+    }
 
-.status-badge.paid {
-    background-color: #c8e6c9;
-    color: #388e3c;
-}
-
-.status-toggle {
-    padding: 5px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.status-toggle.pending {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.status-toggle.paid {
-    background-color: #ff9800;
-    color: white;
-}
-
-.status-toggle:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
-
-.container {
-    display: flex;
-}
-
-.sidebar {
-    width: 250px;
-    background-color: #2c3e50;
-    color: white;
-    padding: 20px;
-    height: 100vh;
-}
-
-.sidebar h2 {
-    margin-bottom: 20px;
-}
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar ul li {
-    margin: 15px 0;
-    cursor: pointer;
-}
-
-.sidebar ul li:hover {
-    text-decoration: underline;
-}
-
-.export-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-}
-
-.export-button:hover {
-    background-color: #219653;
-}
-
-.content {
-    flex: 1;
-    padding: 21px;
+    .payment-table td button {
+        font-size: 0.7rem !important;
+        padding: 0.3rem !important;
+    }
 }
