@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth, db } from "../firebase.js";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
 import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
@@ -10,13 +10,17 @@ import {
     GoogleAuthProvider,
 } from "firebase/auth";
 
+import logEvent from "../utils/logEvent"; // Import logging utility
+
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
+
+
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [userRole, setUserRole] = useState(null); // Add user role state
+    const [userRole, setUserRole] = useState(null);
 
     // Fetch user role from Firestore
     const fetchUserRole = async (uid) => {
@@ -30,21 +34,16 @@ export const AuthProvider = ({ children }) => {
     // Login function
     const login = async (email, password) => {
         try {
-            // Step 1: Sign in the user
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-
-            // Step 2: Fetch the user's role from Firestore
             const role = await fetchUserRole(user.uid);
-
-            // Step 3: Update the user and userRole state
             setUser(user);
             setUserRole(role);
-
-            // Step 4: Return the user and role
+            await logEvent("LOGIN", "User logged in successfully", user.uid);
             return { user, role };
         } catch (error) {
             console.error("Error during login:", error);
+            await logEvent("LOGIN_ERROR", error.message);
             throw error;
         }
     };
@@ -53,10 +52,12 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             await signOut(auth);
-            setUser(null); // Clear the user state
-            setUserRole(null); // Clear the userRole state
+            setUser(null);
+            setUserRole(null);
+            await logEvent("LOGOUT", "User logged out successfully");
         } catch (error) {
             console.error("Error during logout:", error);
+            await logEvent("LOGOUT_ERROR", error.message);
             throw error;
         }
     };
@@ -64,24 +65,19 @@ export const AuthProvider = ({ children }) => {
     // Sign-up function
     const signUp = async (email, password, role = "member") => {
         try {
-            // Step 1: Create the user with email and password
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-
-            // Step 2: Store the user's role in Firestore
             await setDoc(doc(db, "users", user.uid), {
                 email: user.email,
-                role: role, // Store the role (default is "member")
+                role: role,
             });
-
-            // Step 3: Update the user and userRole state
             setUser(user);
             setUserRole(role);
-
-            // Step 4: Return the user credentials and role
+            await logEvent("SIGNUP", "User signed up successfully", user.uid);
             return { user, role };
         } catch (error) {
             console.error("Error during registration:", error);
+            await logEvent("SIGNUP_ERROR", error.message);
             throw error;
         }
     };
@@ -92,15 +88,25 @@ export const AuthProvider = ({ children }) => {
         try {
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
-
-            // Fetch or set the user's role (optional: you can set a default role for Google sign-ins)
-            const role = await fetchUserRole(user.uid) || "member"; // Default to "member" if role is not set
+            const role = await fetchUserRole(user.uid) || "member";
             setUser(user);
             setUserRole(role);
 
+            // Create user document if it doesn't exist
+            const userRef = doc(db, "users", user.uid);
+            const userDoc = await getDoc(userRef);
+            if (!userDoc.exists()) {
+                await setDoc(userRef, {
+                    email: user.email,
+                    role: role,
+                });
+            }
+
+            await logEvent("GOOGLE_LOGIN", "User logged in with Google successfully", user.uid);
             return { user, role };
         } catch (error) {
             console.error("Error during Google sign-in:", error);
+            await logEvent("GOOGLE_LOGIN_ERROR", error.message);
             throw error;
         }
     };

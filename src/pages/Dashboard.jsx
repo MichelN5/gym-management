@@ -8,6 +8,8 @@ const Dashboard = () => {
   const [notifications, setNotifications] = useState([]);
   const [bills, setBills] = useState([]);
   const [user, setUser] = useState(null);
+  const [showAllNotifications, setShowAllNotifications] = useState(false);
+  const [showAllBills, setShowAllBills] = useState(false);
 
   useEffect(() => {
     const fetchUser = () => {
@@ -37,7 +39,6 @@ const Dashboard = () => {
     const fetchBills = async () => {
       if (!user) return;
       const billsRef = collection(db, 'bills');
-      console.log(user.uid)
       const q = query(billsRef, where('userId', '==', user.uid), orderBy('timestamp', 'desc'));
       const querySnapshot = await getDocs(q);
 
@@ -53,6 +54,9 @@ const Dashboard = () => {
     fetchBills();
   }, [user]);
 
+  const displayedNotifications = showAllNotifications ? notifications : notifications.slice(0, 5);
+  const displayedBills = showAllBills ? bills : bills.slice(0, 5);
+
   return (
     <div className="dashboard-container">
       <h1 className="dashboard-header">Member Dashboard</h1>
@@ -64,7 +68,7 @@ const Dashboard = () => {
             <span className="notification-badge">{notifications.length} New</span>
           </div>
           <div className="notifications-list">
-            {notifications.map(notification => (
+            {displayedNotifications.map(notification => (
               <div key={notification.id} className="notification-item">
                 <div className="notification-content">
                   <p>{notification.message}</p>
@@ -73,6 +77,14 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
+          {notifications.length > 5 && (
+            <button
+              className="load-more-button"
+              onClick={() => setShowAllNotifications(!showAllNotifications)}
+            >
+              {showAllNotifications ? 'Show Less' : 'Load More'}
+            </button>
+          )}
         </div>
 
         {/* Bills Section */}
@@ -81,12 +93,12 @@ const Dashboard = () => {
             <h2>Upcoming Bills</h2>
           </div>
           <div className="bills-list">
-            {bills.length > 0 ? (
-              bills.map(bill => (
+            {displayedBills.length > 0 ? (
+              displayedBills.map(bill => (
                 <div key={bill.id} className="bill-item">
                   <div className="bill-info">
                     <h3>{bill.description}</h3>
-                    <p className="due-date">Due: {bill.timestamp}</p>
+                    <p className="due-date">{bill.timestamp}</p>
                   </div>
                   <div className="bill-actions">
                     <span className={`amount ${bill.status}`}>${bill.amount}</span>
@@ -98,6 +110,14 @@ const Dashboard = () => {
               <p>No bills present.</p>
             )}
           </div>
+          {bills.length > 5 && (
+            <button
+              className="load-more-button"
+              onClick={() => setShowAllBills(!showAllBills)}
+            >
+              {showAllBills ? 'Show Less' : 'Load More'}
+            </button>
+          )}
         </div>
       </div>
     </div>

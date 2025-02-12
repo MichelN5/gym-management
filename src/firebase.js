@@ -7,6 +7,26 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+
+
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
+export async function logEvent(eventType, message, userId = "Unknown") {
+    try {
+        await addDoc(collection(db, "logs"), {
+            event: eventType,
+            message: message,
+            userId: userId,
+            timestamp: serverTimestamp()
+        });
+        console.log("Log recorded:", eventType);
+    } catch (error) {
+        console.error("Error logging event:", error);
+    }
+}
+
+
 const firebaseConfig = {
     apiKey: "AIzaSyBQaYbKAkWT_di0UlegNKFGHculqjOsinE",
     authDomain: "gym-management-3954d.firebaseapp.com",

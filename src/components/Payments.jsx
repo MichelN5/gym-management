@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import logEvent from "../utils/logEvent"; // Import logging utility
+import { auth } from "../firebase";
 
 const Payments = ({ bills, members, users, createBill, togglePaymentStatus }) => {
     const [newBill, setNewBill] = useState({
@@ -7,21 +9,43 @@ const Payments = ({ bills, members, users, createBill, togglePaymentStatus }) =>
         description: "",
     });
 
-    const handleCreateBill = () => {
+    const [loggedInUserId, setLoggedInUserId] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setLoggedInUserId(user ? user.uid : null);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const handleCreateBill = async () => {
         const selectedMember = members.find((m) => m.id === newBill.memberId);
         if (!selectedMember) {
             alert("Invalid member selected!");
             return;
         }
 
-        // Ensure the bill is linked to both memberId and user.uid
-        createBill({
+        await createBill({
             ...newBill,
-            userId: selectedMember.userId, // Now correctly linked to the Firebase user
+            userId: selectedMember.userId,
         });
 
-        // Reset form
+        await logEvent(
+            "CREATE_BILL",
+            `Bill of $${newBill.amount} created for member ${selectedMember.name} with description: ${newBill.description}`,
+            loggedInUserId || "Unknown"
+        );
+
         setNewBill({ memberId: "", amount: "", description: "" });
+    };
+
+    const handleTogglePaymentStatus = async (billId, currentStatus) => {
+        await togglePaymentStatus(billId, currentStatus);
+        await logEvent(
+            "TOGGLE_PAYMENT_STATUS",
+            `Payment status for bill ${billId} changed from ${currentStatus} to ${currentStatus === "pending" ? "paid" : "pending"}`,
+            loggedInUserId || "Unknown"
+        );
     };
 
     return (
@@ -70,7 +94,6 @@ const Payments = ({ bills, members, users, createBill, togglePaymentStatus }) =>
                     <tbody>
                         {bills.map((bill) => {
                             const member = members.find((m) => m.id === bill.memberId);
-                            const user = users.find((u) => u.id === member?.userId);
                             return (
                                 <tr key={bill.id}>
                                     <td data-label="Member">{member?.name || "Deleted Member"}</td>
@@ -87,7 +110,7 @@ const Payments = ({ bills, members, users, createBill, togglePaymentStatus }) =>
                                     <td data-label="Action">
                                         <button
                                             className={`status-toggle ${bill.status}`}
-                                            onClick={() => togglePaymentStatus(bill.id, bill.status)}
+                                            onClick={() => handleTogglePaymentStatus(bill.id, bill.status)}
                                         >
                                             Mark as {bill.status === "pending" ? "Paid" : "Pending"}
                                         </button>

@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import logEvent from "../utils/logEvent"; // Import logging utility
+import { auth } from "../firebase";
 
 const Members = ({ members, users, feePackages, addMember, deleteMember }) => {
     const [newMember, setNewMember] = useState({
@@ -7,6 +9,34 @@ const Members = ({ members, users, feePackages, addMember, deleteMember }) => {
         phone: "",
         feePackage: "",
     });
+
+    const [loggedInUserId, setLoggedInUserId] = useState(null);
+
+    // Get the currently logged-in user's ID
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            setLoggedInUserId(user ? user.uid : null);
+        });
+        return () => unsubscribe(); // Cleanup listener on unmount
+    }, []);
+
+    const handleAddMember = async () => {
+        await addMember(newMember);
+        await logEvent(
+            "ENROLL_MEMBER",
+            `User "${newMember.name}" enrolled successfully with Fee Package "${newMember.feePackage}"`,
+            loggedInUserId || "Unknown"
+        );
+    };
+
+    const handleDeleteMember = async (id) => {
+        await deleteMember(id);
+        await logEvent(
+            "DELETE_MEMBER",
+            `Member with ID "${id}" was removed.`,
+            loggedInUserId || "Unknown"
+        );
+    };
 
     return (
         <div className="card">
@@ -46,7 +76,7 @@ const Members = ({ members, users, feePackages, addMember, deleteMember }) => {
                         </option>
                     ))}
                 </select>
-                <button onClick={() => addMember(newMember)}>Enroll Member</button>
+                <button onClick={handleAddMember}>Enroll Member</button>
             </div>
 
             <h2>Gym Members</h2>
@@ -72,7 +102,7 @@ const Members = ({ members, users, feePackages, addMember, deleteMember }) => {
                                     {feePackages.find((pkg) => pkg.id === member.feePackage)?.name || "N/A"}
                                 </td>
                                 <td data-label="Actions">
-                                    <button onClick={() => deleteMember(member.id)}>
+                                    <button onClick={() => handleDeleteMember(member.id)}>
                                         Cancel
                                     </button>
                                 </td>
