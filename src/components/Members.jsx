@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import logEvent from "../utils/logEvent"; // Import logging utility
+import logEvent from "../utils/logEvent";
 import { auth } from "../firebase";
 
-const Members = ({ members, users, feePackages, addMember, deleteMember }) => {
+const Members = ({ members, users, feePackages, addMember, deleteMember, editMember }) => {
     const [newMember, setNewMember] = useState({
         userId: "",
         name: "",
@@ -10,14 +10,14 @@ const Members = ({ members, users, feePackages, addMember, deleteMember }) => {
         feePackage: "",
     });
 
+    const [editingMember, setEditingMember] = useState(null);
     const [loggedInUserId, setLoggedInUserId] = useState(null);
 
-    // Get the currently logged-in user's ID
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             setLoggedInUserId(user ? user.uid : null);
         });
-        return () => unsubscribe(); // Cleanup listener on unmount
+        return () => unsubscribe();
     }, []);
 
     const handleAddMember = async () => {
@@ -27,6 +27,7 @@ const Members = ({ members, users, feePackages, addMember, deleteMember }) => {
             `User "${newMember.name}" enrolled successfully with Fee Package "${newMember.feePackage}"`,
             loggedInUserId || "Unknown"
         );
+        setNewMember({ userId: "", name: "", phone: "", feePackage: "" });
     };
 
     const handleDeleteMember = async (id) => {
@@ -36,6 +37,18 @@ const Members = ({ members, users, feePackages, addMember, deleteMember }) => {
             `Member with ID "${id}" was removed.`,
             loggedInUserId || "Unknown"
         );
+    };
+
+    const handleEditMember = async () => {
+        if (!editingMember) return;
+
+        await editMember(editingMember);
+        await logEvent(
+            "EDIT_MEMBER",
+            `Member with ID "${editingMember.id}" was updated.`,
+            loggedInUserId || "Unknown"
+        );
+        setEditingMember(null);
     };
 
     return (
@@ -95,16 +108,67 @@ const Members = ({ members, users, feePackages, addMember, deleteMember }) => {
                         const user = users.find((u) => u.id === member.userId);
                         return (
                             <tr key={member.id}>
-                                <td data-label="Name">{member.name}</td>
-                                <td data-label="Email">{user?.email || "N/A"}</td>
-                                <td data-label="Phone">{member.phone}</td>
+                                <td data-label="Name">
+                                    {editingMember?.id === member.id ? (
+                                        <input
+                                            type="text"
+                                            value={editingMember.name}
+                                            onChange={(e) =>
+                                                setEditingMember({ ...editingMember, name: e.target.value })
+                                            }
+                                        />
+                                    ) : (
+                                        member.name
+                                    )}
+                                </td>
+                                <td data-label="Email">
+                                    {user?.email || "N/A"}
+                                </td>
+                                <td data-label="Phone">
+                                    {editingMember?.id === member.id ? (
+                                        <input
+                                            type="text"
+                                            value={editingMember.phone}
+                                            onChange={(e) =>
+                                                setEditingMember({ ...editingMember, phone: e.target.value })
+                                            }
+                                        />
+                                    ) : (
+                                        member.phone
+                                    )}
+                                </td>
                                 <td data-label="Fee Package">
-                                    {feePackages.find((pkg) => pkg.id === member.feePackage)?.name || "N/A"}
+                                    {editingMember?.id === member.id ? (
+                                        <select
+                                            value={editingMember.feePackage}
+                                            onChange={(e) =>
+                                                setEditingMember({ ...editingMember, feePackage: e.target.value })
+                                            }
+                                        >
+                                            {feePackages.map((pkg) => (
+                                                <option key={pkg.id} value={pkg.id}>
+                                                    {pkg.name} - ${pkg.price} ({pkg.duration})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        feePackages.find((pkg) => pkg.id === member.feePackage)?.name || "N/A"
+                                    )}
                                 </td>
                                 <td data-label="Actions">
-                                    <button onClick={() => handleDeleteMember(member.id)}>
-                                        Cancel
-                                    </button>
+                                    {editingMember?.id === member.id ? (
+                                        <>
+                                            <button onClick={handleEditMember}>Save</button>
+                                            <button onClick={() => setEditingMember(null)}>Cancel</button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button onClick={() => setEditingMember(member)}>Edit</button>
+                                            <button onClick={() => handleDeleteMember(member.id)}>
+                                                Delete
+                                            </button>
+                                        </>
+                                    )}
                                 </td>
                             </tr>
                         );

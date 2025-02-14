@@ -68,6 +68,14 @@ const AdminDashboard = () => {
                             await deleteDoc(doc(db, "members", id));
                             fetchData();
                         }}
+                        editMember={async (updatedMember) => {
+                            await updateDoc(doc(db, "members", updatedMember.id), {
+                                name: updatedMember.name,
+                                phone: updatedMember.phone,
+                                feePackage: updatedMember.feePackage,
+                            });
+                            fetchData();
+                        }}
                     />
                 )}
                 {activeSection === "payments" && (

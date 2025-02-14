@@ -52,6 +52,7 @@
 }
 
 .notification-badge {
+    margin-left: 15px;
     background: #4299e1;
     color: white;
     padding: 0.25rem 0.75rem;
