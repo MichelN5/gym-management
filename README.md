@@ -51,10 +51,6 @@ The system maintains **detailed logs** of user activities, including:
 
 
 
-## Screenshots
-
-
-
 
 ## Contact
 For any inquiries, reach out to naoussmichel20005@gmail.com or create an issue in this repository.
