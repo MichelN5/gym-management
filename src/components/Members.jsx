@@ -1,10 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    fetchMembersAsync,
+    addMemberAsync,
+    deleteMemberAsync,
+    editMemberAsync,
+} from "../slices/membersSlice";
+import { fetchFeePackagesAsync } from "../slices/feePackagesSlice";
 import MemberForm from "./MemberForm";
 import MemberTable from "./MemberTable";
 
-const Members = ({ members, users, feePackages, addMember, deleteMember, editMember }) => {
+const Members = ({ users }) => {
+    const dispatch = useDispatch();
+    const members = useSelector((state) => state.members.members);
+    const feePackages = useSelector((state) => state.feePackages.feePackages);
+
     const [newMember, setNewMember] = useState({ user: "", name: "", phone: "", fee_package: "" });
     const [editingMember, setEditingMember] = useState(null);
+
+    useEffect(() => {
+        dispatch(fetchMembersAsync());
+        dispatch(fetchFeePackagesAsync()); // Fetch fee packages here
+    }, [dispatch]);
 
     const handleAddMember = async () => {
         if (!newMember.user || !newMember.name || !newMember.phone || !newMember.fee_package) {
@@ -12,12 +29,12 @@ const Members = ({ members, users, feePackages, addMember, deleteMember, editMem
             return;
         }
 
-        await addMember(newMember);
+        dispatch(addMemberAsync(newMember));
         setNewMember({ user: "", name: "", phone: "", fee_package: "" });
     };
 
     const handleDeleteMember = async (id) => {
-        await deleteMember(id);
+        dispatch(deleteMemberAsync(id));
     };
 
     const handleEditMember = async () => {
@@ -28,7 +45,7 @@ const Members = ({ members, users, feePackages, addMember, deleteMember, editMem
             fee_package: editingMember.fee_package?.id || editingMember.fee_package,
         };
 
-        await editMember(memberToUpdate);
+        dispatch(editMemberAsync(memberToUpdate));
         setEditingMember(null);
     };
 
@@ -39,7 +56,7 @@ const Members = ({ members, users, feePackages, addMember, deleteMember, editMem
                 newMember={newMember}
                 setNewMember={setNewMember}
                 users={users}
-                feePackages={feePackages}
+                feePackages={feePackages} // Pass feePackages as a prop
                 onSubmit={handleAddMember}
             />
             <h2>Gym Members</h2>

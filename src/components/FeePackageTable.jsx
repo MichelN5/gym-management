@@ -13,7 +13,7 @@ const FeePackageTable = ({ feePackages, onDelete }) => {
             </thead>
             <tbody>
                 {feePackages.map((pkg) => (
-                    <tr key={pkg.id}>
+                    <tr key={pkg.id || `${pkg.name}-${pkg.price}-${pkg.duration}`}>
                         <td>{pkg.name}</td>
                         <td>{pkg.price}</td>
                         <td>{pkg.duration}</td>

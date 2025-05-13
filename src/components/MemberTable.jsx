@@ -18,7 +18,7 @@ const MemberTable = ({ members, feePackages, editingMember, setEditingMember, on
                             {editingMember?.id === member.id ? (
                                 <input
                                     type="text"
-                                    value={editingMember.name}
+                                    value={editingMember?.name || ""} // Fallback to an empty string
                                     onChange={(e) =>
                                         setEditingMember({ ...editingMember, name: e.target.value })
                                     }
@@ -31,7 +31,7 @@ const MemberTable = ({ members, feePackages, editingMember, setEditingMember, on
                             {editingMember?.id === member.id ? (
                                 <input
                                     type="text"
-                                    value={editingMember.phone}
+                                    value={editingMember?.phone || ""} // Fallback to an empty string
                                     onChange={(e) =>
                                         setEditingMember({ ...editingMember, phone: e.target.value })
                                     }
@@ -43,7 +43,7 @@ const MemberTable = ({ members, feePackages, editingMember, setEditingMember, on
                         <td data-label="Fee Package">
                             {editingMember?.id === member.id ? (
                                 <select
-                                    value={editingMember.fee_package?.id || editingMember.fee_package}
+                                    value={editingMember?.fee_package?.id || editingMember?.fee_package || ""} // Fallback to an empty string
                                     onChange={(e) =>
                                         setEditingMember({ ...editingMember, fee_package: e.target.value })
                                     }

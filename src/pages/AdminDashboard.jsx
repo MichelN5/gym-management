@@ -1,44 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Sidebar from "../components/Sidebar";
 import FeePackages from "../components/FeePackages";
 import Members from "../components/Members";
 import Payments from "../components/Payments";
 import Notifications from "../components/Notifications";
 import "../css/AdminDashboard.css";
-import { useFeePackages } from "../hooks/useFeePackages";
-import { useMembers } from "../hooks/useMembers";
 import { usePayments } from "../hooks/usePayments";
 import { useNotifications } from "../hooks/useNotifications";
-import { useUsers } from "../hooks/useUsers"; // Add a hook to fetch users
+import { useUsers } from "../hooks/useUsers";
+import { fetchMembersAsync } from "../slices/membersSlice";
 
 const AdminDashboard = () => {
     const [activeSection, setActiveSection] = useState("feePackages");
 
-    const { feePackages, addPackage, deletePackage } = useFeePackages();
-    const { members, addMember, deleteMember, editMember } = useMembers();
     const { bills, createBill, togglePaymentStatus } = usePayments();
     const { sendNotification } = useNotifications();
-    const { users } = useUsers(); // Fetch the list of users
+    const { users } = useUsers();
+
+    const dispatch = useDispatch();
+    const members = useSelector((state) => state.members.members);
+
+    useEffect(() => {
+        dispatch(fetchMembersAsync());
+    }, [dispatch]);
 
     const renderSection = () => {
         switch (activeSection) {
             case "feePackages":
-                return (
-                    <FeePackages
-                        feePackages={feePackages}
-                        addFeePackage={addPackage}
-                        deleteFeePackage={deletePackage}
-                    />
-                );
+                return <FeePackages />;
             case "members":
                 return (
                     <Members
                         members={members}
-                        users={users} // Pass the users prop here
-                        addMember={addMember}
-                        deleteMember={deleteMember}
-                        editMember={editMember}
-                        feePackages={feePackages}
+                        users={users}
+                        feePackages={[]}
                     />
                 );
             case "payments":
@@ -63,7 +59,6 @@ const AdminDashboard = () => {
                 setActiveSection={setActiveSection}
                 members={members}
                 bills={bills}
-                feePackages={feePackages}
             />
             <div className="content">{renderSection()}</div>
         </div>
