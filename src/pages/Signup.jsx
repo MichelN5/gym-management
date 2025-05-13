@@ -1,47 +1,70 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Import useEffect
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../css/Login.css";
+import axios from "axios"; // Import axios
+
+import { ACCESS_TOKEN, GOOGLE_ACCESS_TOKEN } from "../token"; // Import token constants
 
 const Signup = () => {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const { signUp, signInWithGoogle } = useAuth();
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const token = localStorage.getItem(ACCESS_TOKEN) || localStorage.getItem(GOOGLE_ACCESS_TOKEN);
+
+        if (token) {
+            axios.get('http://localhost:8000/api/auth/user/', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then(response => {
+                    const user = response.data;
+
+                    if (user.is_superuser) {
+                        navigate("/admin"); // Redirect superuser to admin dashboard
+                    } else {
+                        navigate("/dashboard"); // Redirect normal users
+                    }
+                })
+                .catch(error => {
+                    console.error("Error verifying token:", error);
+                    // Optionally clear invalid token
+                    localStorage.removeItem(ACCESS_TOKEN);
+                });
+        }
+    }, [navigate]); // Dependency array includes navigate
+
     const handleSignup = async (e) => {
         e.preventDefault();
 
-        // Check if passwords match
-        if (password !== confirmPassword) {
-            setError("Passwords do not match");
-            return;
-        }
-
-        // Check if passwords are empty
         if (!password || !confirmPassword) {
             setError("Please enter a password and confirm it");
             return;
         }
 
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+        if (password.length < 8) {
+            setError("Password must be at least 8 characters long");
+            return;
+        }
+
         try {
-            await signUp(email, password); // Use the correct function name
-            navigate("/dashboard"); // Redirect to dashboard after successful signup
+            await signUp(username, password);
+            navigate("/login");
         } catch (error) {
-            // Display specific Firebase error messages
-            setError(error.message || "Failed to create account. Please try again.");
+            setError(error.message); // Now properly displaying error messages
         }
     };
 
     const handleGoogleSignup = async () => {
-        try {
-            await signInWithGoogle(); // Use the Google sign-in function
-            navigate("/dashboard"); // Redirect to dashboard after successful sign-in
-        } catch (error) {
-            setError(error.message || "Failed to sign in with Google. Please try again.");
-        }
+        window.location.href = "http://localhost:8000/accounts/google/login/";
     };
 
     return (
@@ -57,14 +80,14 @@ const Signup = () => {
 
                     <div className="input-group">
                         <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            type="text"
+                            id="username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                             required
                         />
-                        <label htmlFor="email">Email Address</label>
-                        <span className="input-icon">✉</span>
+                        <label htmlFor="username">Username</label>
+                        <span className="input-icon">👤</span>
                     </div>
 
                     <div className="input-group">

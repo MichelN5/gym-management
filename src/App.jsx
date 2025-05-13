@@ -5,11 +5,13 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminDashboard from "./pages/AdminDashboard";
+import RedirectGoogleAuth from "./components/GoogleRedirectHandler"
 
 const App = () => (
   <AuthProvider>
     <Router>
       <Routes>
+        <Route path="/login/callback" element={<RedirectGoogleAuth />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/admin" element={
@@ -18,7 +20,8 @@ const App = () => (
           </PrivateRoute>
         } />
         <Route path='/' element={<Login />} />
-        <Route path="/dashboard" element={<PrivateRoute roleRequired="member"><Dashboard /></PrivateRoute>} />
+
+        <Route path="/dashboard" element={<PrivateRoute ><Dashboard /></PrivateRoute>} />
 
       </Routes>
     </Router>

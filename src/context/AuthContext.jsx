@@ -1,136 +1,180 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "../firebase.js";
-import { doc, setDoc, getDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
-import {
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-    signOut,
-    createUserWithEmailAndPassword,
-    signInWithPopup,
-    GoogleAuthProvider,
-} from "firebase/auth";
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import api from '../api';
+import { ACCESS_TOKEN, REFRESH_TOKEN, GOOGLE_ACCESS_TOKEN } from "../token";
 
-import logEvent from "../utils/logEvent"; // Import logging utility
-
-const AuthContext = createContext();
-
-export const useAuth = () => useContext(AuthContext);
-
-
+const AuthContext = createContext({
+    isAuthorized: false,
+    user: null,
+    login: () => { },
+    logout: () => { },
+    refreshToken: () => { },
+    signUp: () => { }
+});
 
 export const AuthProvider = ({ children }) => {
+    const [isAuthorized, setIsAuthorized] = useState(false);
     const [user, setUser] = useState(null);
-    const [userRole, setUserRole] = useState(null);
 
-    // Fetch user role from Firestore
-    const fetchUserRole = async (uid) => {
-        const userDoc = await getDoc(doc(db, "users", uid));
-        if (userDoc.exists()) {
-            return userDoc.data().role;
+    const checkAuth = async () => {
+        const token = localStorage.getItem(ACCESS_TOKEN);
+        const googleAccessToken = localStorage.getItem(GOOGLE_ACCESS_TOKEN);
+
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+
+
+                if (decoded.exp < Date.now() / 1000) {
+                    await refreshToken();
+                } else {
+
+                    setIsAuthorized(true);
+                    setUser(decoded);
+
+
+
+
+
+
+                }
+            } catch (error) {
+                logout();
+            }
+        } else if (googleAccessToken) {
+            try {
+                const isValid = await validateGoogleToken(googleAccessToken);
+                if (isValid) {
+                    setIsAuthorized(true);
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                logout();
+            }
+        } else {
+            logout();
         }
-        return null;
     };
 
-    // Login function
-    const login = async (email, password) => {
+    const refreshToken = async () => {
+        const refreshToken = localStorage.getItem(REFRESH_TOKEN);
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            const role = await fetchUserRole(user.uid);
-            setUser(user);
-            setUserRole(role);
-            await logEvent("LOGIN", "User logged in successfully", user.uid);
-            return { user, role };
+            const res = await api.post('/api/token/refresh/', { refresh: refreshToken });
+
+            if (res.status === 200) {
+                localStorage.setItem(ACCESS_TOKEN, res.data.access);
+                const decoded = jwtDecode(res.data.access);
+
+
+                setIsAuthorized(true);
+                setUser(decoded);
+                return true;
+            }
         } catch (error) {
-            console.error("Error during login:", error);
-            await logEvent("LOGIN_ERROR", error.message);
-            throw error;
+            console.error('Token refresh failed', error);
+            logout();
         }
+        return false;
     };
 
-    // Logout function
-    const logout = async () => {
+    const validateGoogleToken = async (googleAccessToken) => {
         try {
-            await signOut(auth);
-            setUser(null);
-            setUserRole(null);
-            await logEvent("LOGOUT", "User logged out successfully");
-        } catch (error) {
-            console.error("Error during logout:", error);
-            await logEvent("LOGOUT_ERROR", error.message);
-            throw error;
-        }
-    };
-
-    // Sign-up function
-    const signUp = async (email, password, role = "member") => {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            await setDoc(doc(db, "users", user.uid), {
-                email: user.email,
-                role: role,
+            const res = await api.post('/api/google/validate_token/', {
+                access_token: googleAccessToken,
             });
-            setUser(user);
-            setUserRole(role);
-            await logEvent("SIGNUP", "User signed up successfully", user.uid);
-            return { user, role };
+            return res.data.valid;
         } catch (error) {
-            console.error("Error during registration:", error);
-            await logEvent("SIGNUP_ERROR", error.message);
-            throw error;
+            console.error('Google token validation failed', error);
+            return false;
         }
     };
 
-    // Google sign-in function
-    const signInWithGoogle = async () => {
-        const provider = new GoogleAuthProvider();
+    const login = async (credentials) => {
         try {
-            const result = await signInWithPopup(auth, provider);
-            const user = result.user;
-            const role = await fetchUserRole(user.uid) || "member";
-            setUser(user);
-            setUserRole(role);
-
-            // Create user document if it doesn't exist
-            const userRef = doc(db, "users", user.uid);
-            const userDoc = await getDoc(userRef);
-            if (!userDoc.exists()) {
-                await setDoc(userRef, {
-                    email: user.email,
-                    role: role,
-                });
+            let res;
+            if (credentials.google_token) {
+                res = await api.post('/api/google/login/', { access_token: credentials.google_token });
+            } else {
+                res = await api.post('/api/token/', credentials);
             }
 
-            await logEvent("GOOGLE_LOGIN", "User logged in with Google successfully", user.uid);
-            return { user, role };
+            localStorage.setItem(ACCESS_TOKEN, res.data.access);
+            if (res.data.refresh) {
+                localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+            }
+
+            await checkAuth();
+            return true;
         } catch (error) {
-            console.error("Error during Google sign-in:", error);
-            await logEvent("GOOGLE_LOGIN_ERROR", error.message);
-            throw error;
+            console.error('Login failed', error);
+            return false;
         }
     };
 
-    // Listen for auth state changes
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const role = await fetchUserRole(user.uid);
-                setUser(user);
-                setUserRole(role);
+    const signUp = async (username, password) => {
+        try {
+            const res = await api.post('http://127.0.0.1:8000/api/user/register/', {
+                username,
+                password
+            });
+
+            if (res.status === 201) {
+                return res.data; // Return user data or success response
             } else {
-                setUser(null);
-                setUserRole(null);
+                throw new Error("Unexpected response from server");
             }
-        });
-        return unsubscribe;
+        } catch (error) {
+            if (error.response) {
+                // Server responded with a status other than 2xx
+                throw new Error(error.response.data?.message || "Failed to create account.");
+            } else if (error.request) {
+                // Request was made but no response received
+                throw new Error("No response from server. Please check your connection.");
+            } else {
+                // Other errors (e.g., coding errors)
+                throw new Error("An unexpected error occurred.");
+            }
+        }
+    };
+
+
+    const logout = () => {
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(REFRESH_TOKEN);
+        localStorage.removeItem(GOOGLE_ACCESS_TOKEN);
+        setIsAuthorized(false);
+        setUser(null);
+    };
+
+    useEffect(() => {
+        checkAuth();
+
+        const interval = setInterval(() => {
+            checkAuth();
+        }, 5 * 60 * 1000);
+
+        return () => clearInterval(interval);
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, userRole, login, logout, signUp, signInWithGoogle }}>
+        <AuthContext.Provider value={{
+            isAuthorized,
+            user,
+            login,
+            logout,
+            refreshToken,
+            signUp
+        }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-export default AuthProvider;
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};

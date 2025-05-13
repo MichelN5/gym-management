@@ -1,18 +1,15 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // Adjust the path
+import { useAuth } from "../context/AuthContext"; // Adjust the path based on your structure
 
-const PrivateRoute = ({ children, roleRequired }) => {
-    const { user, userRole } = useAuth();
-
-    if (!user) {
+const PrivateRoute = ({ children }) => {
+    const { user, isAuthorized } = useAuth();
+    if (!isAuthorized) {
         return <Navigate to="/login" />;
-
     }
 
-    if (roleRequired && userRole !== roleRequired) {
-        return <Navigate to="/" />; // Redirect to home or another page
-    }
+
+
 
     return children;
 };

@@ -1,45 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Import useEffect
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FaLock, FaEnvelope } from "react-icons/fa"
+import { FaLock, FaUser } from "react-icons/fa"; // Updated icon for username
 import "../css/Login.css";
+import axios from "axios";
+
+import { ACCESS_TOKEN, REFRESH_TOKEN, GOOGLE_ACCESS_TOKEN } from "../token";
 
 const Login = () => {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState(""); // Changed to username
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const { login, signInWithGoogle, userRole } = useAuth(); // Add userRole from AuthContext
+    const { login } = useAuth(); // Using login from AuthContext
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem(ACCESS_TOKEN) || localStorage.getItem(GOOGLE_ACCESS_TOKEN);
+
+        if (token) {
+            axios.get('http://localhost:8000/api/auth/user/', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then(response => {
+                    const user = response.data;
+
+                    if (user.is_superuser) {
+                        navigate("/admin"); // Redirect superuser to admin dashboard
+                    } else {
+                        navigate("/dashboard"); // Redirect normal users
+                    }
+                })
+                .catch(error => {
+                    console.error("Error verifying token:", error);
+                    // Optionally clear invalid token
+                    localStorage.removeItem(ACCESS_TOKEN);
+                });
+        }
+    }, [navigate]); // Dependency array includes navigate
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        try {
-            const { role } = await login(email, password); // Get the role from login
+        const success = await login({ username, password });
 
-            // Redirect based on role
-            if (role === "admin") {
-                navigate("/admin"); // Redirect to Admin Dashboard
-            } else {
-                navigate("/dashboard"); // Redirect to Member Dashboard
-            }
-        } catch (error) {
+        if (success) {
+            console.log(localStorage.getItem(ACCESS_TOKEN));
+            axios.get('http://localhost:8000/api/auth/user/', {
+                headers: { Authorization: `Bearer ${localStorage.getItem(ACCESS_TOKEN)}` }
+            })
+                .then(response => {
+                    const user = response.data;
+
+                    if (user.is_superuser) {
+                        navigate("/admin"); // Redirect superuser to admin dashboard
+                    } else {
+                        navigate("/dashboard"); // Redirect normal users
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching user details:", error);
+                });
+        } else {
             setError("Invalid credentials. Please try again.");
         }
     };
 
-    const handleGoogleLogin = async () => {
-        try {
-            const { role } = await signInWithGoogle(); // Get the role from Google sign-in
-
-            // Redirect based on role
-            if (role === "admin") {
-                navigate("/admin"); // Redirect to Admin Dashboard
-            } else {
-                navigate("/dashboard"); // Redirect to Member Dashboard
-            }
-        } catch (error) {
-            setError(error.message || "Failed to sign in with Google. Please try again.");
-        }
+    const handleGoogleLogin = () => {
+        window.location.href = "http://localhost:8000/accounts/google/login/";
     };
 
     return (
@@ -54,27 +80,25 @@ const Login = () => {
                     {error && <div className="error-message">{error}</div>}
 
                     <div className="input-group">
+                        <FaUser className="input-icon" /> {/* Changed icon */}
                         <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            type="text" // Username is a string, not an email
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                             required
+                            placeholder="Username"
                         />
-                        <label htmlFor="email">Email Address</label>
-                        <FaEnvelope className="input-icon" />
                     </div>
 
                     <div className="input-group">
+                        <FaLock className="input-icon" />
                         <input
                             type="password"
-                            id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            placeholder="Password"
                         />
-                        <label htmlFor="password">Password</label>
-                        <FaLock className="input-icon" />
                     </div>
 
                     <button type="submit" className="primary-btn">

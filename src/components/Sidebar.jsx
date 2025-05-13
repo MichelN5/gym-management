@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { CSVLink } from "react-csv";
-import logEvent from "../utils/logEvent"; // Import logging utility
-import { auth } from "../firebase"; // Import Firebase auth
+import { useAuth } from "../context/AuthContext"; // Import useAuth to access the logout function
 
-const Sidebar = ({ setActiveSection, members, bills, feePackages, users }) => {
+const Sidebar = ({ setActiveSection, members = [], bills = [], feePackages = [], users = [] }) => {
     const [isMobile, setIsMobile] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { logout } = useAuth(); // Destructure logout from useAuth
 
     useEffect(() => {
         const checkMobile = () => {
@@ -17,26 +16,6 @@ const Sidebar = ({ setActiveSection, members, bills, feePackages, users }) => {
         window.addEventListener("resize", checkMobile);
         return () => window.removeEventListener("resize", checkMobile);
     }, []);
-
-    const handleExport = async () => {
-        const userId = auth.currentUser ? auth.currentUser.uid : "Unknown User";
-
-        await logEvent(
-            "EXPORT_DATA",
-            "User exported member payment data to CSV.",
-            userId
-        );
-    };
-
-    const csvData = members.map((member) => ({
-        name: member.name,
-        email: users.find((u) => u.id === member.userId)?.email || "N/A",
-        phone: member.phone,
-        feePackage: feePackages.find((pkg) => pkg.id === member.feePackage)?.name || "N/A",
-        paymentAmount: bills
-            .filter((bill) => bill.memberId === member.id)
-            .reduce((sum, bill) => sum + parseFloat(bill.amount), 0),
-    }));
 
     return (
         <>
@@ -67,20 +46,13 @@ const Sidebar = ({ setActiveSection, members, bills, feePackages, users }) => {
                     </li>
                 </ul>
 
-                <CSVLink
-                    data={csvData}
-                    headers={[
-                        { label: "Name", key: "name" },
-                        { label: "Email", key: "email" },
-                        { label: "Phone", key: "phone" },
-                        { label: "Fee Package", key: "feePackage" },
-                        { label: "Total Payments", key: "paymentAmount" },
-                    ]}
-                    filename="members_payments.csv"
-                    onClick={handleExport} // Log export action
+                {/* Logout button */}
+                <button
+                    className="logout-button"
+                    onClick={() => { logout(); isMobile && setSidebarOpen(false); }}
                 >
-                    <button className="export-button">Export Data</button>
-                </CSVLink>
+                    Logout
+                </button>
             </div>
         </>
     );
