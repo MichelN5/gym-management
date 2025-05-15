@@ -29,23 +29,30 @@ const Members = ({ users }) => {
             return;
         }
 
-        dispatch(addMemberAsync(newMember));
+        await dispatch(addMemberAsync(newMember));
+        dispatch(fetchMembersAsync()); // Refetch members after adding
         setNewMember({ user: "", name: "", phone: "", fee_package: "" });
     };
 
     const handleDeleteMember = async (id) => {
-        dispatch(deleteMemberAsync(id));
+        await dispatch(deleteMemberAsync(id));
+        dispatch(fetchMembersAsync()); // Refetch members after deleting
     };
 
     const handleEditMember = async () => {
         if (!editingMember) return;
 
+        const selectedFeePackage = feePackages.find(
+            (pkg) => pkg.id === editingMember.fee_package
+        );
+
         const memberToUpdate = {
             ...editingMember,
-            fee_package: editingMember.fee_package?.id || editingMember.fee_package,
+            fee_package: selectedFeePackage || editingMember.fee_package, // Ensure the full fee package object is included
         };
 
-        dispatch(editMemberAsync(memberToUpdate));
+        await dispatch(editMemberAsync(memberToUpdate));
+        dispatch(fetchMembersAsync()); // Refetch members after editing
         setEditingMember(null);
     };
 

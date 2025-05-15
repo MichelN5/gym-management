@@ -18,7 +18,7 @@ const MemberTable = ({ members, feePackages, editingMember, setEditingMember, on
                             {editingMember?.id === member.id ? (
                                 <input
                                     type="text"
-                                    value={editingMember?.name || ""} // Fallback to an empty string
+                                    value={editingMember?.name || ""}
                                     onChange={(e) =>
                                         setEditingMember({ ...editingMember, name: e.target.value })
                                     }
@@ -31,7 +31,7 @@ const MemberTable = ({ members, feePackages, editingMember, setEditingMember, on
                             {editingMember?.id === member.id ? (
                                 <input
                                     type="text"
-                                    value={editingMember?.phone || ""} // Fallback to an empty string
+                                    value={editingMember?.phone || ""}
                                     onChange={(e) =>
                                         setEditingMember({ ...editingMember, phone: e.target.value })
                                     }
@@ -43,9 +43,12 @@ const MemberTable = ({ members, feePackages, editingMember, setEditingMember, on
                         <td data-label="Fee Package">
                             {editingMember?.id === member.id ? (
                                 <select
-                                    value={editingMember?.fee_package?.id || editingMember?.fee_package || ""} // Fallback to an empty string
+                                    value={editingMember?.fee_package?.id || editingMember?.fee_package || ""}
                                     onChange={(e) =>
-                                        setEditingMember({ ...editingMember, fee_package: e.target.value })
+                                        setEditingMember({
+                                            ...editingMember,
+                                            fee_package: e.target.value,
+                                        })
                                     }
                                 >
                                     {feePackages.map((pkg) => (
@@ -55,7 +58,7 @@ const MemberTable = ({ members, feePackages, editingMember, setEditingMember, on
                                     ))}
                                 </select>
                             ) : (
-                                member.fee_package
+                                member.fee_package?.name
                                     ? `${member.fee_package.name} - $${member.fee_package.price} (${member.fee_package.duration})`
                                     : "N/A"
                             )}

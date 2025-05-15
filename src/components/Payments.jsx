@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchBillsThunk, createBillThunk, togglePaymentStatusThunk } from "../slices/paymentsSlice";
 import PaymentForm from "./PaymentForm";
 import PaymentTable from "./PaymentTable";
 
-const Payments = ({ bills, members, createBill, togglePaymentStatus }) => {
+const Payments = ({ members }) => {
+    const dispatch = useDispatch();
+    const { bills, loading, error } = useSelector((state) => state.payments);
     const [newBill, setNewBill] = useState({ memberId: "", amount: "", description: "" });
+
+    useEffect(() => {
+        dispatch(fetchBillsThunk());
+    }, [dispatch]);
 
     const handleCreateBill = async () => {
         const selectedMember = members.find((m) => m.id == newBill.memberId);
@@ -19,13 +27,16 @@ const Payments = ({ bills, members, createBill, togglePaymentStatus }) => {
             description: newBill.description,
         };
 
-        await createBill(billData);
+        dispatch(createBillThunk(billData));
         setNewBill({ memberId: "", amount: "", description: "" });
     };
 
     const handleTogglePaymentStatus = async (billId, currentStatus) => {
-        await togglePaymentStatus(billId, currentStatus);
+        dispatch(togglePaymentStatusThunk({ billId, currentStatus }));
     };
+
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error}</p>;
 
     return (
         <div className="card">

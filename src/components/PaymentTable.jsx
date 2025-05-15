@@ -17,7 +17,6 @@ const PaymentTable = ({ bills, members, onToggleStatus }) => {
                 <tbody>
                     {bills.map((bill) => {
                         const member = members.find((m) => m.id === bill.memberId);
-                        console.log(bill.member)
                         return (
                             <tr key={bill.id}>
                                 <td data-label="Member">{bill.member.name || "Deleted Member"}</td>
@@ -34,7 +33,10 @@ const PaymentTable = ({ bills, members, onToggleStatus }) => {
                                 <td data-label="Action">
                                     <button
                                         className={`status-toggle ${bill.status}`}
-                                        onClick={() => onToggleStatus(bill.id, bill.status)}
+                                        onClick={(e) => {
+                                            e.preventDefault(); // Prevent page refresh
+                                            onToggleStatus(bill.id, bill.status);
+                                        }}
                                     >
                                         Mark as {bill.status === "pending" ? "Paid" : "Pending"}
                                     </button>

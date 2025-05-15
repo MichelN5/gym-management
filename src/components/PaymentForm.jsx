@@ -26,7 +26,15 @@ const PaymentForm = ({ newBill, setNewBill, members, onSubmit }) => {
                 value={newBill.description}
                 onChange={(e) => setNewBill({ ...newBill, description: e.target.value })}
             />
-            <button onClick={onSubmit}>Create Bill</button>
+            <button
+                type="button" // Explicitly set the button type to "button"
+                onClick={(e) => {
+                    e.preventDefault(); // Prevent page refresh
+                    onSubmit();
+                }}
+            >
+                Create Bill
+            </button>
         </div>
     );
 };
